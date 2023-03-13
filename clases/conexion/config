@@ -1,0 +1,10 @@
+
+{
+    "conexion":{
+        "server" : "localhost",
+        "user" : "APANI",
+        "password" : "*Myaccountpani*",
+        "database" : "pani",
+        "port": "3306"
+    }
+}
