@@ -13,11 +13,54 @@ class ws_getpremio_menor extends Conexionn {
     private $serie = "";
     //Declaracion del metodo 
 
+    //metodo get
+    public function ObtenerPremio($sorteo, $numero){
+        $query = "SELECT estado , detalle_venta, total FROM archivo_pagos_mayor WHERE sorteo = '$sorteo' AND numero = '$numero'; ";
+        $datos = parent::obtenerDatos($query);
+        return $datos;
+
+    }
+
+
+    public function get($json){
+        $_respuesta = new respuestas;
+        $datos = json_decode($json, true);
+        
+        if(isset($datos['token'])){
+            $this->token = $datos["token"];
+        $arrayToken = $this->buscarToken();
+            if($arrayToken){
+                if(!isset($datos['sorteo']) || !isset($datos['numero']) || !isset($datos['serie'])){
+                    return $_respuesta->error_400();
+                }else{
+                    $sorteo = $datos['sorteo'];
+                    $numero = $datos['numero'];
+                    $serie = $datos['serie'];
+                    $respp= $this->ObtenerPremio($sorteo, $numero, $serie);
+                    return $respp;
+
+                }
+                   
+
+            }else{
+                return $_respuesta->error_401("El token que envio es invalido o ha caducado ");
+            }
+
+        }else{
+            return $_respuesta->error_401();
+
+        }
+    }
+
+    //metodo post
+
     public function premioMenor(){
         $query = "SELECT estado , detalle_venta, totalpayment FROM archivo_pagos_menor WHERE sorteo= '". $this->sorteo ."' AND numero= '". $this->numero ."' AND serie= '". $this->serie ."';";
         $datos = parent::obtenerDatos($query);
         return($datos);
     }
+
+
 
 
     public function post($json){
@@ -33,18 +76,10 @@ class ws_getpremio_menor extends Conexionn {
                             $this->numero = $datos['numero'];
                             $this->serie = $datos['serie'];
                             $resp = $this->premioMenor();
-
                             return $resp;
-
-
-    
                     }else{
                         return $_respuesta->error_401("El token que envio es invalido o ha caducado ");
                     }
-            }
-
-            if(!isset($datos['usuario'])){
-
             }
 
     }
